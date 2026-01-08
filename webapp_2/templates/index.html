@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Wine Pairing</title>
+
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+
+        /* 전체 컨텐츠 래퍼 */
+        .viewport-wrapper {
+            max-width: 80vw;
+            margin: 0 auto;
+        }
+
+        /* 카드 스타일 */
+        .pairing-card {
+            border: 2px solid #8bc5c3;
+            border-radius: 8px;
+        }
+
+        /* 메인 버튼 */
+        .btn-primary-custom {
+            background-color: #8f96f5;
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            background-color: #7a81e8;
+        }
+
+        /* 모바일 대응 */
+        @media (max-width: 768px) {
+            .viewport-wrapper {
+                max-width: 95vw;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="viewport-wrapper">
+
+        <!-- 제목 -->
+        <div class="text-center my-5">
+            <h1 class="fw-bold">🍷 Wine Pairing</h1>
+        </div>
+
+        <!-- 메인 카드 -->
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-10">
+                <div class="card pairing-card p-4">
+
+                    <h5 class="mb-3 fw-semibold">요리 이미지 선택</h5>
+
+                    <!-- form -->
+                    <form id="pairingForm">
+                        <div class="mb-4">
+                            <input
+                                class="form-control"
+                                type="file"
+                                name="file"
+                                id="foodImage"
+                                accept="image/*"
+                                required
+                            >
+                        </div>
+
+                        <!-- 버튼 -->
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary-custom w-100 py-2">
+                                    와인 추천 받기
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <button
+                                    type="reset"
+                                    class="btn btn-outline-secondary w-100 py-2">
+                                    다시하기
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- JS -->
+<script>
+    const form = document.getElementById("pairingForm");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const fileInput = document.getElementById("foodImage");
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("이미지를 선택해주세요.");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch("/pairing", {
+                method: "POST",
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error("서버 오류");
+            }
+
+            const result = await response.json();
+            console.log(result);
+
+            alert("와인 추천 완료 (콘솔 확인)");
+
+        } catch (error) {
+            console.error(error);
+            alert("와인 추천 중 오류가 발생했습니다.");
+        }
+    });
+</script>
+
+</body>
+</html>
